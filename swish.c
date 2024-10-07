@@ -59,6 +59,12 @@ int main(int argc, char **argv) {
         if (strcmp(first_token, "pwd") == 0) {
             // TODO Task 1: Print the shell's current working directory
             // Use the getcwd() system call
+            char cwd[CMD_LEN];
+            if (getcwd(cwd, sizeof(cwd)) != NULL) {
+                printf("%s\n", cwd);
+            } else {
+                perror("getcwd");
+            }
         }
 
         else if (strcmp(first_token, "cd") == 0) {
@@ -67,6 +73,19 @@ int main(int argc, char **argv) {
             // If the user supplied an argument (token at index 1), change to that directory
             // Otherwise, change to the home directory by default
             // This is available in the HOME environment variable (use getenv())
+            
+            const char *second_token;
+            // Check if there is a second token available
+            if ((second_token = strvec_get(&tokens, 1)) != NULL) {
+                if (chdir(second_token) == -1) {
+                    perror("chdir");
+                }
+            // If no token available, default to HOME
+            } else {
+                if (chdir(getenv("HOME")) == -1) {
+                    perror("chdir");
+                }
+            }
         }
 
         else if (strcmp(first_token, "exit") == 0) {
