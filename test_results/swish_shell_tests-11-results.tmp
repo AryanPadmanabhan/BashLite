@@ -1,4 +1,4 @@
-=============================================================================================================================================================================================================================================
+===================================================================================================================================================================================
 == Test 11: Redirect Input From File
 == Run 'wc' with its input coming from a file.
 Running test...
@@ -9,7 +9,12 @@ Test FAILED
 == Differing lines have a character like '|' '>' or '<' in the middle
 ==== EXPECT ====                          ==== ACTUAL ====
 @> wc < test_cases/resources/gatsby.txt   @> wc < test_cases/resources/gatsby.txt
-6772  51187 299452                      <
+6772  51187 299452                      | wc: '<': No such file or directory
+                                        >   6772  51187 299452 test_cases/resources/gatsby.txt
+                                        >   6772  51187 299452 total
  @> exit                                  @> exit
 == Line Differences ==
 EXPECT 2) 6772  51187 299452
+ACTUAL 2) wc: '<': No such file or directory
+ACTUAL 3)   6772  51187 299452 test_cases/resources/gatsby.txt
+ACTUAL 4)   6772  51187 299452 total

@@ -73,7 +73,7 @@ int main(int argc, char **argv) {
             // If the user supplied an argument (token at index 1), change to that directory
             // Otherwise, change to the home directory by default
             // This is available in the HOME environment variable (use getenv())
-            
+
             const char *second_token;
             // Check if there is a second token available
             if ((second_token = strvec_get(&tokens, 1)) != NULL) {
@@ -146,6 +146,20 @@ int main(int argc, char **argv) {
             //   1. Use fork() to spawn a child process
             //   2. Call run_command() in the child process
             //   2. In the parent, use waitpid() to wait for the program to exit
+            pid_t pid;
+            if ((pid = fork()) == -1) {
+                perror("fork");
+                return -1;
+            }
+            // Child process
+            if (pid == 0) {
+                run_command(&tokens);
+                return 1;
+
+            } else {
+                int status;
+                waitpid(pid, &status, 0);
+            }
 
             // TODO Task 4: Set the child process as the target of signals sent to the terminal
             // via the keyboard.

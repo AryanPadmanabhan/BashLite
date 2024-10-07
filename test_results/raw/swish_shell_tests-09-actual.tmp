@@ -1,4 +1,7 @@
 @> cd test_cases/resources
 @> ls > ../out.txt
+ls: cannot access '>': No such file or directory
+ls: cannot access '../out.txt': No such file or directory
 @> cat ../out.txt
+cat: ../out.txt: No such file or directory
 @> exit

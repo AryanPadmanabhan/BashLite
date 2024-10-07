@@ -1,4 +1,4 @@
-=============================================================================================================================================================================================================================================
+===================================================================================================================================================================================
 == Test 10: Output Redirection Overwrites File
 == Run a 'ls' and redirect its output to a file. Then cat this file to display
 == its contents and verify that old version of file is overwritten.
@@ -10,17 +10,25 @@ Test FAILED
 == Differing lines have a character like '|' '>' or '<' in the middle
 ==== EXPECT ====             ==== ACTUAL ====
 @> echo foo > out.txt        @> echo foo > out.txt
+                           > foo > out.txt
 @> cat out.txt               @> cat out.txt
-foo                        <
+foo                        | cat: out.txt: No such file or directory
 @> cd test_cases/resources   @> cd test_cases/resources
 @> ls > ../../out.txt        @> ls > ../../out.txt
+                           > ls: cannot access '>': No such file or directory
+                           > ls: cannot access '../../out.txt': No such file or directory
 @> cat ../../out.txt         @> cat ../../out.txt
-gatsby.txt                 <
+gatsby.txt                 | cat: ../../out.txt: No such file or directory
 quote.txt                  <
 slow_write.c               <
 @> exit                      @> exit
 == Line Differences ==
+ACTUAL  2) foo > out.txt
 EXPECT  3) foo
+ACTUAL  4) cat: out.txt: No such file or directory
+ACTUAL  7) ls: cannot access '>': No such file or directory
+ACTUAL  8) ls: cannot access '../../out.txt': No such file or directory
 EXPECT  7) gatsby.txt
+ACTUAL 10) cat: ../../out.txt: No such file or directory
 EXPECT  8) quote.txt
 EXPECT  9) slow_write.c

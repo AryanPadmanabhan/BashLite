@@ -1,4 +1,4 @@
-=============================================================================================================================================================================================================================================
+===================================================================================================================================================================================
 == Test 12: Redirect Output from Command with Arguments to File
 == Run a command with several arguments and redirect its output to a file. 'cat'
 == this file to display its contents
@@ -10,8 +10,17 @@ Test FAILED
 == Differing lines have a character like '|' '>' or '<' in the middle
 ==== EXPECT ====                                                   ==== ACTUAL ====
 @> wc -c -m -l -L -w test_cases/resources/gatsby.txt > out.txt     @> wc -c -m -l -L -w test_cases/resources/gatsby.txt > out.txt
+                                                                 >   6772  51187 299452 299452     74 test_cases/resources/gatsby.txt
+                                                                 > wc: '>': No such file or directory
+                                                                 > wc: out.txt: No such file or directory
+                                                                 >   6772  51187 299452 299452     74 total
 @> cat out.txt                                                     @> cat out.txt
-6772  51187 299452 299452     74 test_cases/resources/gatsby.txt <
+6772  51187 299452 299452     74 test_cases/resources/gatsby.txt | cat: out.txt: No such file or directory
 @> exit                                                            @> exit
 == Line Differences ==
+ACTUAL 2)   6772  51187 299452 299452     74 test_cases/resources/gatsby.txt
+ACTUAL 3) wc: '>': No such file or directory
+ACTUAL 4) wc: out.txt: No such file or directory
+ACTUAL 5)   6772  51187 299452 299452     74 total
 EXPECT 3) 6772  51187 299452 299452     74 test_cases/resources/gatsby.txt
+ACTUAL 7) cat: out.txt: No such file or directory
