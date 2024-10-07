@@ -1,0 +1,16 @@
+===================================================================================================================================================================================
+== Test 5: Change to Non-Existent Directory
+== Attempts to change to a non-existent directory. Shell should print out an
+== appropriate error message.
+Running test...
+Expected output is in file 'test_results/raw/swish_shell_tests-05-expected.tmp'
+Actual output is in file 'test_results/raw/swish_shell_tests-05-actual.tmp'
+Test FAILED
+== Side-by-Side Comparison ==
+== Differing lines have a character like '|' '>' or '<' in the middle
+==== EXPECT ====                      ==== ACTUAL ====
+@> cd this_directory_does_not_exist   @> cd this_directory_does_not_exist
+chdir: No such file or directory    <
+@> exit                               @> exit
+== Line Differences ==
+EXPECT 2) chdir: No such file or directory
