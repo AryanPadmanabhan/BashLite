@@ -1,0 +1,27 @@
+===================================================================================================================================================================================
+== Test 15: Redirect both Input and Output
+== Run the 'cat' command with both input and output redirected. The command
+== effectively copies a file. Then 'cat' this copy to display its contents.
+Running test...
+Expected output is in file 'test_results/raw/swish_shell_tests-15-expected.tmp'
+Actual output is in file 'test_results/raw/swish_shell_tests-15-actual.tmp'
+Test FAILED
+== Side-by-Side Comparison ==
+== Differing lines have a character like '|' '>' or '<' in the middle
+==== EXPECT ====                                    ==== ACTUAL ====
+@> cat < test_cases/resources/quote.txt > out.txt   @> cat < test_cases/resources/quote.txt > out.txt
+@> cat out.txt                                    | cat: '<': No such file or directory
+Premature optimization is the root of all evil.     Premature optimization is the root of all evil.
+    -- Donald Knuth                                     -- Donald Knuth
+                                                  > cat: '>': No such file or directory
+                                                  > cat: out.txt: No such file or directory
+                                                  > @> cat out.txt
+                                                  > cat: out.txt: No such file or directory
+@> exit                                             @> exit
+== Line Differences ==
+EXPECT 2) @> cat out.txt
+ACTUAL 2) cat: '<': No such file or directory
+ACTUAL 5) cat: '>': No such file or directory
+ACTUAL 6) cat: out.txt: No such file or directory
+ACTUAL 7) @> cat out.txt
+ACTUAL 8) cat: out.txt: No such file or directory

@@ -50,6 +50,26 @@ int run_command(strvec_t *tokens) {
     // Hint: Build a string array from the 'tokens' vector and pass this into execvp()
     // Another Hint: You have a guarantee of the longest possible needed array, so you
     // won't have to use malloc.
+
+    struct sigaction sac;
+    sac.sa_handler = SIG_DFL;
+    if (sigfillset(&sac.sa_mask) == -1) {
+        perror("sigfillset");
+        return -1;
+    }
+    sac.sa_flags = 0;
+    if (sigaction(SIGTTIN, &sac, NULL) == -1 || sigaction(SIGTTOU, &sac, NULL) == -1) {
+        perror("sigaction");
+        return -1;
+    }
+
+    pid_t pid = getpid();
+    if (setpgid(pid, pid) == -1) {
+        perror("setpgid");
+        return -1;
+    }
+
+
     char *args[tokens->length + 1];
     for (int i = 0; i < tokens->length; i++) {
         if ((args[i] = strvec_get(tokens, i)) == NULL) {
@@ -59,7 +79,7 @@ int run_command(strvec_t *tokens) {
     }
     args[tokens->length] = NULL;
     if (execvp(args[0], args) == -1) {
-        // If execvp fails, print the error and return 
+        // If execvp fails, print the error and return
         perror("exec");
         return -1;
     }
