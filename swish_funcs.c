@@ -173,6 +173,60 @@ int resume_job(strvec_t *tokens, job_list_t *jobs, int is_foreground) {
     // 5. If the job has terminated (not stopped), remove it from the 'jobs' list
     // 6. Call tcsetpgrp(STDIN_FILENO, <shell_pid>). shell_pid is the *current*
     //    process's pid, since we call this function from the main shell process
+    
+    // Parse the job index from tokens[1]
+    char *job_token_char = strvec_get(tokens, 1);  // strvec_get() returns a char*, not a char
+    if (job_token_char == NULL) {
+        fprintf(stderr, "Failed to get job token\n");
+        return -1;
+    }
+
+    // Convert the job index to an integer
+    int job_token = atoi(job_token_char);
+    if (job_token == 0 && strcmp(job_token_char, "0") != 0) {  // Check for conversion failure
+        fprintf(stderr, "Invalid job index\n");
+        return -1;
+    }
+
+    // Retrieve the job from the jobs list
+    job_t *job = job_list_get(jobs, job_token);
+    if (job == NULL) {
+        fprintf(stderr, "Job index out of bounds\n");
+        return -1;
+    }
+
+    // Move the job's process group to the foreground
+    if (tcsetpgrp(STDIN_FILENO, job->pid) == -1) {
+        perror("tcsetpgrp");
+        return -1;
+    }
+
+    // Send the SIGCONT signal to the process
+    if (kill(job->pid, SIGCONT) == -1) {
+        perror("Failed to send SIGCONT");
+        return -1;
+    }
+
+    // Wait for the process to continue (or terminate)
+    int status;
+    waitpid(job->pid, &status, WUNTRACED);  // Don't forget WUNTRACED for stopped processes
+
+    // Check if the job terminated (either normally or via a signal)
+    if (WIFEXITED(status) || WIFSIGNALED(status)) {
+        if (job_list_remove(jobs, job_token) == -1) {
+            fprintf(stderr, "Failed to remove job from list\n");
+        }
+    }
+
+    // Restore the shell to the foreground
+    pid_t shell_pid = getpid();
+    if (tcsetpgrp(STDIN_FILENO, shell_pid) == -1) {
+        perror("tcsetpgrp");
+        return -1;
+    }
+
+
+
 
     // TODO Task 6: Implement the ability to resume stopped jobs in the background.
     // This really just means omitting some of the steps used to resume a job in the foreground:

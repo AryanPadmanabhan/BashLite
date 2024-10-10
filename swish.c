@@ -162,11 +162,17 @@ int main(int argc, char **argv) {
                     return -1;
                 }
                 int status;
-                waitpid(pid, &status, 0);
+                waitpid(pid, &status, WUNTRACED);
                 pid_t ppid = getpid();
                 if (tcsetpgrp(STDIN_FILENO, ppid) == -1) {
                     perror("tcsetpgrp");
                     return -1;
+                }
+                if (WIFSTOPPED(status)) {
+                    job_status_t status = STOPPED;  // Set job as background or stopped
+                    if (job_list_add(&jobs, pid, first_token, status) == -1) {
+                        printf("Failed to add job to list");
+                    }
                 }
             }
 

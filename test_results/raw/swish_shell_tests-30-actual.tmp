@@ -1,0 +1,14 @@
+@> ./slow_write 2 0 out.txt &
+@> jobs
+@> ./slow_write 3 0 out2.txt &
+@> jobs
+@> wait-all
+@> jobs
+@> cat out.txt
+1
+2
+@> cat out2.txt
+1
+2
+3
+@> exit
