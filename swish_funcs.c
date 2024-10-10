@@ -35,7 +35,7 @@ int tokenize(char *s, strvec_t *tokens) {
     while (token != NULL) {
         // Add token to the token vec
         if (strvec_add(tokens, token) == -1) {
-            return -1;  // Return error if adding the token fails
+            return -1;    // Return error if adding the token fails
         }
         // Get next token
         token = strtok(NULL, " ");
@@ -69,21 +69,79 @@ int run_command(strvec_t *tokens) {
         return -1;
     }
 
-
     char *args[tokens->length + 1];
+    int arg_count = 0;
+    // Process tokens and prepare args for exec
     for (int i = 0; i < tokens->length; i++) {
-        if ((args[i] = strvec_get(tokens, i)) == NULL) {
+        if ((args[arg_count] = strvec_get(tokens, i)) == NULL) {
             printf("strvec_get");
             return -1;
+        } else if (strcmp(args[arg_count], ">") == 0 || strcmp(args[arg_count], ">>") == 0 ||
+                   strcmp(args[arg_count], "<") == 0) {
+            args[arg_count] = NULL;    // Terminate args array before redirection operators
+            break;
         }
+        arg_count++;
     }
-    args[tokens->length] = NULL;
+
+    // }
+
+    // Handle output redirection
+    int redir_index;
+    if ((redir_index = strvec_find(tokens, ">")) != -1) {    // Output redirection
+        char *file_name = strvec_get(tokens, redir_index + 1);
+        int fd;
+
+        if ((fd = open(file_name, O_WRONLY | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR)) == -1) {
+            perror("Failed to open output file");
+            return -1;    // Exit if there's an error opening the file
+        }
+
+        if (dup2(fd, STDOUT_FILENO) == -1) {
+            perror("dup2");
+            close(fd);
+            return -1;
+        }
+        close(fd);    // Close the file descriptor after duplicating
+    } else if ((redir_index = strvec_find(tokens, ">>")) != -1) {    // Append redirection
+        char *file_name = strvec_get(tokens, redir_index + 1);
+        int fd;
+
+        if ((fd = open(file_name, O_WRONLY | O_CREAT | O_APPEND, S_IRUSR | S_IWUSR)) == -1) {
+            perror("Failed to open output file");
+            return -1;
+        }
+
+        if (dup2(fd, STDOUT_FILENO) == -1) {
+            perror("dup2");
+            close(fd);
+            return -1;
+        }
+        close(fd);
+    }
+    if ((redir_index = strvec_find(tokens, "<")) != -1) {    // Input redirection
+        char *file_name = strvec_get(tokens, redir_index + 1);
+        int fd;
+
+        if ((fd = open(file_name, O_RDONLY)) == -1) {    // Open for reading
+            perror("Failed to open input file");
+            return -1;    // Exit if there's an error opening the file
+        }
+
+        if (dup2(fd, STDIN_FILENO) == -1) {    // Redirect stdin to the file
+            perror("dup2");
+            close(fd);
+            return -1;
+        }
+        close(fd);    // Close the file descriptor after duplicating
+    }
+
+    args[arg_count] = NULL;
     if (execvp(args[0], args) == -1) {
         // If execvp fails, print the error and return
         perror("exec");
         return -1;
     }
-
 
     // TODO Task 3: Extend this function to perform output redirection before exec()'ing
     // Check for '<' (redirect input), '>' (redirect output), '>>' (redirect and append output)
@@ -131,7 +189,8 @@ int await_background_job(strvec_t *tokens, job_list_t *jobs) {
     // 1. Look up the relevant job information (in a job_t) from the jobs list
     //    using the index supplied by the user (in tokens index 1)
     // 2. Make sure the job's status is BACKGROUND (no sense waiting for a stopped job)
-    // 3. Use waitpid() to wait for the job to terminate, as you have in resume_job() and main().
+    // 3. Use waitpid() to wait for the job to terminate, as you have in resume_job() and
+    // main().
     // 4. If the process terminates (is not stopped by a signal) remove it from the jobs list
 
     return 0;

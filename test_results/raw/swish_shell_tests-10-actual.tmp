@@ -1,11 +1,10 @@
 @> echo foo > out.txt
-foo > out.txt
 @> cat out.txt
-cat: out.txt: No such file or directory
+foo
 @> cd test_cases/resources
 @> ls > ../../out.txt
-ls: cannot access '>': No such file or directory
-ls: cannot access '../../out.txt': No such file or directory
 @> cat ../../out.txt
-cat: ../../out.txt: No such file or directory
+gatsby.txt
+quote.txt
+slow_write.c
 @> exit

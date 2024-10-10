@@ -1,15 +1,40 @@
-==3151== Memcheck, a memory error detector
-==3151== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
-==3151== Using Valgrind-3.18.1 and LibVEX; rerun with -h for copyright info
-==3151== Command: ./swish
-==3151== Parent PID: 3012
-==3151== 
-==3151== 
-==3151== HEAP SUMMARY:
-==3151==     in use at exit: 0 bytes in 0 blocks
-==3151==   total heap usage: 8 allocs, 8 frees, 2,151 bytes allocated
-==3151== 
-==3151== All heap blocks were freed -- no leaks are possible
-==3151== 
-==3151== For lists of detected and suppressed errors, rerun with: -s
-==3151== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+==63077== Memcheck, a memory error detector
+==63077== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==63077== Using Valgrind-3.18.1 and LibVEX; rerun with -h for copyright info
+==63077== Command: ./swish
+==63077== Parent PID: 62951
+==63077== 
+==63078== 
+==63078== HEAP SUMMARY:
+==63078==     in use at exit: 66 bytes in 4 blocks
+==63078==   total heap usage: 8 allocs, 4 frees, 3,610 bytes allocated
+==63078== 
+==63078== 34 bytes in 3 blocks are indirectly lost in loss record 1 of 2
+==63078==    at 0x4865058: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-arm64-linux.so)
+==63078==    by 0x10966F: strvec_add (string_vector.c:54)
+==63078==    by 0x109D07: tokenize (swish_funcs.c:37)
+==63078==    by 0x1090A3: main (swish.c:47)
+==63078== 
+==63078== 66 (32 direct, 34 indirect) bytes in 1 blocks are definitely lost in loss record 2 of 2
+==63078==    at 0x4865058: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-arm64-linux.so)
+==63078==    by 0x1094CF: strvec_init (string_vector.c:14)
+==63078==    by 0x109043: main (swish.c:33)
+==63078== 
+==63078== LEAK SUMMARY:
+==63078==    definitely lost: 32 bytes in 1 blocks
+==63078==    indirectly lost: 34 bytes in 3 blocks
+==63078==      possibly lost: 0 bytes in 0 blocks
+==63078==    still reachable: 0 bytes in 0 blocks
+==63078==         suppressed: 0 bytes in 0 blocks
+==63078== 
+==63078== For lists of detected and suppressed errors, rerun with: -s
+==63078== ERROR SUMMARY: 2 errors from 2 contexts (suppressed: 0 from 0)
+==63077== 
+==63077== HEAP SUMMARY:
+==63077==     in use at exit: 0 bytes in 0 blocks
+==63077==   total heap usage: 8 allocs, 8 frees, 2,151 bytes allocated
+==63077== 
+==63077== All heap blocks were freed -- no leaks are possible
+==63077== 
+==63077== For lists of detected and suppressed errors, rerun with: -s
+==63077== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)

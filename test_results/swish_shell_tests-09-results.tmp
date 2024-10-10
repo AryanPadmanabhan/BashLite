@@ -1,27 +1,8 @@
-===================================================================================================================================================================================
+====================================================================================================================================================================
 == Test 9: Redirect Output to File
 == Run a 'ls' and redirect its output to a file. Then cat this file to display
 == its contents.
 Running test...
 Expected output is in file 'test_results/raw/swish_shell_tests-09-expected.tmp'
 Actual output is in file 'test_results/raw/swish_shell_tests-09-actual.tmp'
-Test FAILED
-== Side-by-Side Comparison ==
-== Differing lines have a character like '|' '>' or '<' in the middle
-==== EXPECT ====             ==== ACTUAL ====
-@> cd test_cases/resources   @> cd test_cases/resources
-@> ls > ../out.txt           @> ls > ../out.txt
-                           > ls: cannot access '>': No such file or directory
-                           > ls: cannot access '../out.txt': No such file or directory
-@> cat ../out.txt            @> cat ../out.txt
-gatsby.txt                 | cat: ../out.txt: No such file or directory
-quote.txt                  <
-slow_write.c               <
-@> exit                      @> exit
-== Line Differences ==
-ACTUAL 3) ls: cannot access '>': No such file or directory
-ACTUAL 4) ls: cannot access '../out.txt': No such file or directory
-EXPECT 4) gatsby.txt
-ACTUAL 6) cat: ../out.txt: No such file or directory
-EXPECT 5) quote.txt
-EXPECT 6) slow_write.c
+Test PASSED
