@@ -1,40 +1,40 @@
-==48383== Memcheck, a memory error detector
-==48383== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
-==48383== Using Valgrind-3.18.1 and LibVEX; rerun with -h for copyright info
-==48383== Command: ./swish
-==48383== Parent PID: 48262
-==48383== 
-==48387== 
-==48387== HEAP SUMMARY:
-==48387==     in use at exit: 66 bytes in 4 blocks
-==48387==   total heap usage: 8 allocs, 4 frees, 3,610 bytes allocated
-==48387== 
-==48387== 34 bytes in 3 blocks are indirectly lost in loss record 1 of 2
-==48387==    at 0x4865058: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-arm64-linux.so)
-==48387==    by 0x1097AB: strvec_add (string_vector.c:54)
-==48387==    by 0x109E43: tokenize (swish_funcs.c:37)
-==48387==    by 0x1091A3: main (swish.c:47)
-==48387== 
-==48387== 66 (32 direct, 34 indirect) bytes in 1 blocks are definitely lost in loss record 2 of 2
-==48387==    at 0x4865058: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-arm64-linux.so)
-==48387==    by 0x10960B: strvec_init (string_vector.c:14)
-==48387==    by 0x109143: main (swish.c:33)
-==48387== 
-==48387== LEAK SUMMARY:
-==48387==    definitely lost: 32 bytes in 1 blocks
-==48387==    indirectly lost: 34 bytes in 3 blocks
-==48387==      possibly lost: 0 bytes in 0 blocks
-==48387==    still reachable: 0 bytes in 0 blocks
-==48387==         suppressed: 0 bytes in 0 blocks
-==48387== 
-==48387== For lists of detected and suppressed errors, rerun with: -s
-==48387== ERROR SUMMARY: 2 errors from 2 contexts (suppressed: 0 from 0)
-==48383== 
-==48383== HEAP SUMMARY:
-==48383==     in use at exit: 0 bytes in 0 blocks
-==48383==   total heap usage: 8 allocs, 8 frees, 2,151 bytes allocated
-==48383== 
-==48383== All heap blocks were freed -- no leaks are possible
-==48383== 
-==48383== For lists of detected and suppressed errors, rerun with: -s
-==48383== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+==82300== Memcheck, a memory error detector
+==82300== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==82300== Using Valgrind-3.18.1 and LibVEX; rerun with -h for copyright info
+==82300== Command: ./swish
+==82300== Parent PID: 82180
+==82300== 
+==82302== 
+==82302== HEAP SUMMARY:
+==82302==     in use at exit: 66 bytes in 4 blocks
+==82302==   total heap usage: 8 allocs, 4 frees, 3,610 bytes allocated
+==82302== 
+==82302== 34 bytes in 3 blocks are indirectly lost in loss record 1 of 2
+==82302==    at 0x4865058: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-arm64-linux.so)
+==82302==    by 0x10980B: strvec_add (string_vector.c:54)
+==82302==    by 0x109EA3: tokenize (swish_funcs.c:37)
+==82302==    by 0x1091A3: main (swish.c:47)
+==82302== 
+==82302== 66 (32 direct, 34 indirect) bytes in 1 blocks are definitely lost in loss record 2 of 2
+==82302==    at 0x4865058: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-arm64-linux.so)
+==82302==    by 0x10966B: strvec_init (string_vector.c:14)
+==82302==    by 0x109143: main (swish.c:33)
+==82302== 
+==82302== LEAK SUMMARY:
+==82302==    definitely lost: 32 bytes in 1 blocks
+==82302==    indirectly lost: 34 bytes in 3 blocks
+==82302==      possibly lost: 0 bytes in 0 blocks
+==82302==    still reachable: 0 bytes in 0 blocks
+==82302==         suppressed: 0 bytes in 0 blocks
+==82302== 
+==82302== For lists of detected and suppressed errors, rerun with: -s
+==82302== ERROR SUMMARY: 2 errors from 2 contexts (suppressed: 0 from 0)
+==82300== 
+==82300== HEAP SUMMARY:
+==82300==     in use at exit: 0 bytes in 0 blocks
+==82300==   total heap usage: 8 allocs, 8 frees, 2,151 bytes allocated
+==82300== 
+==82300== All heap blocks were freed -- no leaks are possible
+==82300== 
+==82300== For lists of detected and suppressed errors, rerun with: -s
+==82300== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)

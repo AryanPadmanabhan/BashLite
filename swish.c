@@ -157,23 +157,31 @@ int main(int argc, char **argv) {
                 return 1;
 
             } else {
-                if (tcsetpgrp(STDIN_FILENO, pid) == -1) {
-                    perror("tcsetpgrp");
-                    return -1;
-                }
-                int status;
-                waitpid(pid, &status, WUNTRACED);
-                pid_t ppid = getpid();
-                if (tcsetpgrp(STDIN_FILENO, ppid) == -1) {
-                    perror("tcsetpgrp");
-                    return -1;
-                }
-                if (WIFSTOPPED(status)) {
-                    job_status_t status = STOPPED;  // Set job as background or stopped
+                if (strcmp(strvec_get(&tokens, tokens.length - 1), "&") == 0) {  // Check if last token is "&"
+                    job_status_t status = BACKGROUND;  // Set job as background
                     if (job_list_add(&jobs, pid, first_token, status) == -1) {
-                        printf("Failed to add job to list");
+                        printf("Failed to add job to list\n");
+                    }
+                } else { // foreground case
+                    if (tcsetpgrp(STDIN_FILENO, pid) == -1) {
+                        perror("tcsetpgrp");
+                        return -1;
+                    }
+                    int status;
+                    waitpid(pid, &status, WUNTRACED);
+                    pid_t ppid = getpid();
+                    if (tcsetpgrp(STDIN_FILENO, ppid) == -1) {
+                        perror("tcsetpgrp");
+                        return -1;
+                    }
+                    if (WIFSTOPPED(status)) {
+                        job_status_t status = STOPPED;  // Set job as background or stopped
+                        if (job_list_add(&jobs, pid, first_token, status) == -1) {
+                            printf("Failed to add job to list");
+                        }
                     }
                 }
+
             }
 
             // TODO Task 4: Set the child process as the target of signals sent to the terminal
@@ -201,6 +209,8 @@ int main(int argc, char **argv) {
             //    use waitpid() to interact with the newly spawned child process.
             // 3. Add a new entry to the jobs list with the child's pid, program name,
             //    and status BACKGROUND.
+
+
         }
 
         strvec_clear(&tokens);
