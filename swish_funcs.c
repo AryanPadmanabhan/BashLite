@@ -35,7 +35,7 @@ int tokenize(char *s, strvec_t *tokens) {
     while (token != NULL) {
         // Add token to the token vec
         if (strvec_add(tokens, token) == -1) {
-            return -1;    // Return error if adding the token fails
+            return -1;
         }
         // Get next token
         token = strtok(NULL, " ");
@@ -51,6 +51,7 @@ int run_command(strvec_t *tokens) {
     // Another Hint: You have a guarantee of the longest possible needed array, so you
     // won't have to use malloc.
 
+    // Init sig
     struct sigaction sac;
     sac.sa_handler = SIG_DFL;
     if (sigfillset(&sac.sa_mask) == -1) {
@@ -71,6 +72,7 @@ int run_command(strvec_t *tokens) {
 
     char *args[tokens->length + 1];
     int arg_count = 0;
+
     // Process tokens and prepare args for exec
     for (int i = 0; i < tokens->length; i++) {
         if ((args[arg_count] = strvec_get(tokens, i)) == NULL) {
@@ -78,23 +80,24 @@ int run_command(strvec_t *tokens) {
             return -1;
         } else if (strcmp(args[arg_count], ">") == 0 || strcmp(args[arg_count], ">>") == 0 ||
                    strcmp(args[arg_count], "<") == 0) {
-            args[arg_count] = NULL;    // Terminate args array before redirection operators
+            // Terminate args array before redirection operators
+            args[arg_count] = NULL;
             break;
         }
         arg_count++;
     }
 
-    // }
 
     // Handle output redirection
     int redir_index;
-    if ((redir_index = strvec_find(tokens, ">")) != -1) {    // Output redirection
+    if ((redir_index = strvec_find(tokens, ">")) != -1) {
         char *file_name = strvec_get(tokens, redir_index + 1);
         int fd;
 
+        // Open file and duplicate it to the STDOUT
         if ((fd = open(file_name, O_WRONLY | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR)) == -1) {
             perror("Failed to open output file");
-            return -1;    // Exit if there's an error opening the file
+            return -1;
         }
 
         if (dup2(fd, STDOUT_FILENO) == -1) {
@@ -102,11 +105,19 @@ int run_command(strvec_t *tokens) {
             close(fd);
             return -1;
         }
-        close(fd);    // Close the file descriptor after duplicating
-    } else if ((redir_index = strvec_find(tokens, ">>")) != -1) {    // Append redirection
+
+        // Close out file
+        if (close(fd) == -1) {
+            perror("close");
+            return -1;
+        }
+
+    // Handle append redirection
+    } else if ((redir_index = strvec_find(tokens, ">>")) != -1) {
         char *file_name = strvec_get(tokens, redir_index + 1);
         int fd;
 
+        // Open file in append mode and duplicate it to the STDOUT
         if ((fd = open(file_name, O_WRONLY | O_CREAT | O_APPEND, S_IRUSR | S_IWUSR)) == -1) {
             perror("Failed to open output file");
             return -1;
@@ -117,28 +128,41 @@ int run_command(strvec_t *tokens) {
             close(fd);
             return -1;
         }
-        close(fd);
+
+        // Close out file
+        if (close(fd) == -1) {
+            perror("close");
+            return -1;
+        }
     }
-    if ((redir_index = strvec_find(tokens, "<")) != -1) {    // Input redirection
+    // Handle input redirection
+    if ((redir_index = strvec_find(tokens, "<")) != -1) {
         char *file_name = strvec_get(tokens, redir_index + 1);
         int fd;
 
-        if ((fd = open(file_name, O_RDONLY)) == -1) {    // Open for reading
+        // Open for reading
+        if ((fd = open(file_name, O_RDONLY)) == -1) {
             perror("Failed to open input file");
-            return -1;    // Exit if there's an error opening the file
+            return -1;
         }
 
-        if (dup2(fd, STDIN_FILENO) == -1) {    // Redirect stdin to the file
+        // Redirect stdin to the file
+        if (dup2(fd, STDIN_FILENO) == -1) {
             perror("dup2");
             close(fd);
             return -1;
         }
-        close(fd);    // Close the file descriptor after duplicating
+
+        // Close out file
+        if (close(fd) == -1) {
+            perror("close");
+            return -1;
+        }
     }
 
+    // Exec
     args[arg_count] = NULL;
     if (execvp(args[0], args) == -1) {
-        // If execvp fails, print the error and return
         perror("exec");
         return -1;
     }
@@ -176,6 +200,7 @@ int resume_job(strvec_t *tokens, job_list_t *jobs, int is_foreground) {
 
     // Parse the job index from tokens[1]
 
+    // Get the job token from the index
     char *job_token_char = strvec_get(tokens, 1);
     if (job_token_char == NULL) {
         fprintf(stderr, "Failed to get job token\n");
@@ -235,10 +260,6 @@ int resume_job(strvec_t *tokens, job_list_t *jobs, int is_foreground) {
         }
     }
 
-
-
-
-
     // TODO Task 6: Implement the ability to resume stopped jobs in the background.
     // This really just means omitting some of the steps used to resume a job in the foreground:
     // 1. DO NOT call tcsetpgrp() to manipulate foreground/background terminal process group
@@ -258,6 +279,7 @@ int await_background_job(strvec_t *tokens, job_list_t *jobs) {
     // main().
     // 4. If the process terminates (is not stopped by a signal) remove it from the jobs list
 
+    // Get the job token from the index
     char *job_token_char = strvec_get(tokens, 1);
     if (job_token_char == NULL) {
         fprintf(stderr, "Failed to get job token\n");
@@ -283,8 +305,11 @@ int await_background_job(strvec_t *tokens, job_list_t *jobs) {
         return -1;
     }
 
+    // Wait for the job to terminate
     int status;
     waitpid(job->pid, &status, WUNTRACED);
+
+    // Remove job from the list of jobs
     if (WIFEXITED(status)) {
         if (job_list_remove(jobs, job_token) == -1) {
             fprintf(stderr, "Failed to remove job from list\n");
@@ -304,11 +329,15 @@ int await_all_background_jobs(job_list_t *jobs) {
     // 4. Remove all background jobs (which have all just terminated) from jobs list.
     //    Use the job_list_remove_by_status() function.
 
+
+    // Init job
     job_t *job = jobs->head;
     int status;
 
+    // Wait for each job
     for (int i = 0; i < jobs->length; i++) {
         if (job->status == BACKGROUND) {
+            // Does not let me error check this
             waitpid(job->pid, &status, WUNTRACED);
             if (WIFSTOPPED(status)) {
                 job->status = STOPPED;
@@ -316,6 +345,7 @@ int await_all_background_jobs(job_list_t *jobs) {
         }
     }
 
+    // Remove all background jobs from list of jobs
     job_list_remove_by_status(jobs, BACKGROUND);
 
     return 0;

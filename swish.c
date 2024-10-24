@@ -146,6 +146,8 @@ int main(int argc, char **argv) {
             //   1. Use fork() to spawn a child process
             //   2. Call run_command() in the child process
             //   2. In the parent, use waitpid() to wait for the program to exit
+
+            // Call fork
             pid_t pid;
             if ((pid = fork()) == -1) {
                 perror("fork");
@@ -153,20 +155,27 @@ int main(int argc, char **argv) {
             }
             // Child process
             if (pid == 0) {
+                if (strcmp(strvec_get(&tokens, tokens.length - 1), "&") == 0) {
+                    strvec_take(&tokens, tokens.length - 1);
+                }
                 run_command(&tokens);
                 return 1;
 
-            } else {
-                if (strcmp(strvec_get(&tokens, tokens.length - 1), "&") == 0) {  // Check if last token is "&"
+            } else { // Parent process
+                // Check if last token is "&"
+                if (strcmp(strvec_get(&tokens, tokens.length - 1), "&") == 0) {
+                    // Set job as background
                     job_status_t status = BACKGROUND;  // Set job as background
                     if (job_list_add(&jobs, pid, first_token, status) == -1) {
                         printf("Failed to add job to list\n");
                     }
-                } else { // foreground case
+                // foreground case
+                } else {
                     if (tcsetpgrp(STDIN_FILENO, pid) == -1) {
                         perror("tcsetpgrp");
                         return -1;
                     }
+
                     int status;
                     waitpid(pid, &status, WUNTRACED);
                     pid_t ppid = getpid();
@@ -175,7 +184,8 @@ int main(int argc, char **argv) {
                         return -1;
                     }
                     if (WIFSTOPPED(status)) {
-                        job_status_t status = STOPPED;  // Set job as background or stopped
+                        // Set job as stopped
+                        job_status_t status = STOPPED;
                         if (job_list_add(&jobs, pid, first_token, status) == -1) {
                             printf("Failed to add job to list");
                         }
