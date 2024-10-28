@@ -1,6 +1,3 @@
-// Author: John Kolb <jhkolb@umn.edu>
-// SPDX-License-Identifer: GPL-3.0-or-later
-
 #ifndef STRING_VECTOR_H
 #define STRING_VECTOR_H
 

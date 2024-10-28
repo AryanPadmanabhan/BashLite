@@ -1,4 +1,0 @@
-@> wc
-^Z
-@> jobs
-@> exit

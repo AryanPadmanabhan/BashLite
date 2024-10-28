@@ -1,4 +1,0 @@
-@> pwd
-@> cd {{echo $HOME}}
-@> pwd
-@> exit

@@ -1,6 +1,3 @@
-// Author: John Kolb <jhkolb@umn.edu>
-// SPDX-License-Identifer: GPL-3.0-or-later
-
 #include "string_vector.h"
 
 #include <stdlib.h>

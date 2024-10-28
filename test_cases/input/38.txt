@@ -1,8 +1,0 @@
-@> wc
-^Z
-@> jobs
-@> fg 1
-@> fg 0
-^D
-@> jobs
-@> exit
